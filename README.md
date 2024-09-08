@@ -30,5 +30,4 @@ This is the database structure used, PK is primary key, FK is foreign key and th
 
 ## How to run
 1. Make a database using the structure given, if you don't understand how to do it feel free to ask me at my linkedin (link in bio).
-  
 2. run the code.
