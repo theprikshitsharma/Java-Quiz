@@ -26,4 +26,4 @@ A multiple choice quiz/test GUI in Java using Swing and MySQL.
 This is the database structure used, PK is primary key, FK is foreign key and the multi headed arrow from question table to category table represents many to one relation, same for answer table to question table. 
 
 ## Showcase
-Checkout the files attached with the main folder for showcase of the app.
+Checkout the files attached with the src folder for showcase of the app.
