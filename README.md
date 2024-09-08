@@ -18,7 +18,7 @@ A multiple choice quiz/test GUI in Java using Swing and MySQL.
 
    
 ## How to run
-1. Make a database using the structure given, if you don't understand how to do it feel free to ask me at my linkedin (link in bio).
+1. Make a database using the structure given, if you don't understand how to do it feel free to ask me at my [linkedin](https://www.linkedin.com/in/theprikshitsharma/).
 2. run the code.
 
 ## Database Structure
