@@ -1,5 +1,5 @@
-# Java-Quiz
-## A multiple choice quiz/test GUI in Java using Swing and MySQL.
+## Java-Quiz
+A multiple choice quiz/test GUI in Java using Swing and MySQL.
 
  # Technologies used
  ## JDK-22
