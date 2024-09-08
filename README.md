@@ -7,22 +7,14 @@ A multiple choice quiz/test GUI in Java using Swing and MySQL.
  MySQL Workbench
  
 ## Features
-Choose the Category of the Quiz
-
-Input the number of questions that you want to do
-
-Create your own Question
-
-Display the Score
-
-Display the wrong answers
-
-Display the right answers
-
-Store Question into MySQL Database
-
-Validate input
-
+1. Choose the Category of the Quiz
+2. Input the number of questions that you want to do
+3. Create your own Question
+4. Display the Score
+5. Display the wrong answers
+6. Display the right answers
+7. Store Question into MySQL Database
+8. Validate input
 
 ## Database Structure
 ![WhatsApp Image 2024-09-08 at 23 29 55_7a1d8a62](https://github.com/user-attachments/assets/7f70308b-89e7-434d-ab67-94e0365c415f)
