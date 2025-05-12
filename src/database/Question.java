@@ -6,6 +6,7 @@ public class Question {
     private int questionId;
     private int categoryId;
     private String questionText;
+    private int points;
 
     private ArrayList<Answer> answers;
 
@@ -29,10 +30,19 @@ public class Question {
         this.answers = answers;
     }
 
-    public Question(int questionId, int categoryId, String questionText) {
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public Question(int questionId, int categoryId, String questionText, int points ) {
         this.questionId = questionId;
         this.categoryId = categoryId;
         this.questionText = questionText;
+        this.points = points;
     }  
     
 }

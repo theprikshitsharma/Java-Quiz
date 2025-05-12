@@ -12,7 +12,7 @@ public class JDBC {
     public static final String DB_PASSWORD = "Edusecure@123";
 
 
-    public static boolean saveQuestionCategoryAndAnswersToDatabase(String question, String category, String[] answers, int correctIndex) {
+    public static boolean saveQuestionCategoryAndAnswersToDatabase(String question, String category, String[] answers, int correctIndex, int points) {
      try {
         // establish a database connection
         Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
@@ -24,7 +24,7 @@ public class JDBC {
             categoryObj = insertCategory(category);
         }
 
-        Question questionObj = insertQuestion(categoryObj, question);
+         Question questionObj = insertQuestion(categoryObj, question, points);
          return insertAnswers(questionObj, answers, correctIndex);
      } 
      
@@ -36,20 +36,25 @@ public class JDBC {
     }
 
     // question methods
-    private static Question insertQuestion(Category category , String questionText) {
+    private static Question insertQuestion(Category category , String questionText, int points) {
         try {
             Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
-    
-            PreparedStatement insertQuestionQuery = connection.prepareStatement("INSERT INTO QUESTION (CATEGORY_ID, QUESTION_TEXT) " + "VALUES (? , ?)", Statement.RETURN_GENERATED_KEYS);
+
+            PreparedStatement insertQuestionQuery = connection.prepareStatement(
+                    "INSERT INTO QUESTION (CATEGORY_ID, QUESTION_TEXT, POINTS) VALUES (?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
+            );
             insertQuestionQuery.setInt(1, category.getCategoryId());
             insertQuestionQuery.setString(2, questionText);
+            insertQuestionQuery.setInt(3, points);
+
             insertQuestionQuery.executeUpdate();
 
             // check for the question id
             ResultSet resultSet = insertQuestionQuery.getGeneratedKeys();
             if (resultSet.next()) {
                 int questionId = resultSet.getInt(1);
-                return new Question(questionId, category.getCategoryId(), questionText);
+                return new Question(questionId, category.getCategoryId(), questionText, points);
             }
 
           } catch (Exception e) {
@@ -144,7 +149,8 @@ public class JDBC {
           int questionId = resultSet.getInt("question_id");
           int categoryId = resultSet.getInt("category_id");
           String question = resultSet.getString("question_text");
-          questions.add(new Question(questionId, categoryId, question));
+          int points = resultSet.getInt("points");
+            questions.add(new Question(questionId, categoryId, question, points));
         }
 
 

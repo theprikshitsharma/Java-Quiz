@@ -15,6 +15,7 @@ public class CreateQuestionScreenGui extends JFrame{
 
     private JTextArea questionTextArea;
     private JTextField categoryTextField;
+    private JTextField scoreTextField;
     private JTextField[] answerTextFields;
     private ButtonGroup buttonGroup;
     private JRadioButton[] answerRadioButtons;
@@ -81,18 +82,19 @@ public class CreateQuestionScreenGui extends JFrame{
 
         JLabel numOfQuestionsLabel = new JLabel("Points: ");
         numOfQuestionsLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        numOfQuestionsLabel.setBounds(20, 190, 172, 20);
+        numOfQuestionsLabel.setToolTipText("Enter the score this question should carry (1 to 5)");
+        numOfQuestionsLabel.setBounds(50, 400, 93, 20);
         numOfQuestionsLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        numOfQuestionsLabel.setForeground(CommonConstants.BLACK);
+        numOfQuestionsLabel.setForeground(new Color(0xFFA500));
         add(numOfQuestionsLabel);
 
-        // num of questions text input field
-//        numOfQuestionsTextField = new JTextField("10");
-//        numOfQuestionsTextField.setFont(new Font("Arial", Font.BOLD, 16));
-//        numOfQuestionsTextField.setBounds(200, 190, 148, 26);
-//        numOfQuestionsTextField.setForeground(CommonConstants.BG);
-//        numOfQuestionsTextField.setBackground(CommonConstants.BLACK);
-//        add(numOfQuestionsTextField);
+//         num of questions text input field
+        scoreTextField = new JTextField("1");
+        scoreTextField.setFont(new Font("Arial", Font.BOLD, 16));
+        scoreTextField.setBounds(200, 400, 148, 26);
+        scoreTextField.setForeground(CommonConstants.BG);
+        scoreTextField.setBackground(CommonConstants.BLACK);
+        add(scoreTextField);
 
 
 
@@ -110,6 +112,7 @@ public class CreateQuestionScreenGui extends JFrame{
                 if (validateInput()) {
                     String question = questionTextArea.getText();
                     String category = categoryTextField.getText();
+                    int points = Integer.parseInt(scoreTextField.getText());
                     String[] answers = new String[answerTextFields.length];
                     int correctIndex = 0;
                     for (int i = 0; i < answerTextFields.length; i++) {
@@ -119,7 +122,7 @@ public class CreateQuestionScreenGui extends JFrame{
                         }
                     }
 
-                    if (JDBC.saveQuestionCategoryAndAnswersToDatabase(question, category, answers, correctIndex)) {
+                    if (JDBC.saveQuestionCategoryAndAnswersToDatabase(question, category, answers, correctIndex, points)) {
                         JOptionPane.showMessageDialog(CreateQuestionScreenGui.this, "Successfully Added Question!");
                         resetFields();
                     } else {
@@ -176,14 +179,31 @@ public class CreateQuestionScreenGui extends JFrame{
     }
 
     private boolean validateInput() {
-        if (questionTextArea.getText().replaceAll(" ", "").length() <= 0) return false;
-        if (categoryTextField.getText().replaceAll(" ", "").length() <= 0) return false;
-        for (int i = 0; i < answerTextFields.length; i++) {
-            if (answerTextFields[i].getText().replaceAll(" ", "").length() <= 0)
-                return false;
+        // Check if question and category fields are not empty
+        if (questionTextArea.getText().trim().isEmpty()) return false;
+        if (categoryTextField.getText().trim().isEmpty()) return false;
+
+        // Check if all answer fields are not empty
+        for (JTextField answerField : answerTextFields) {
+            if (answerField.getText().trim().isEmpty()) return false;
         }
+
+        // Validate score input
+        String scoreText = scoreTextField.getText().trim();
+        try {
+            int score = Integer.parseInt(scoreText);
+            if (score < 1 || score > 5) {
+                JOptionPane.showMessageDialog(this, "Points must be between 1 and 5.");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Points must be a number between 1 and 5.");
+            return false;
+        }
+
         return true;
     }
+
 
     private void resetFields() {
         questionTextArea.setText("");
@@ -192,4 +212,5 @@ public class CreateQuestionScreenGui extends JFrame{
             answerTextFields[i].setText("");
         }
     }
+
 }

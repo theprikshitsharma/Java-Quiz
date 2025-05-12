@@ -23,9 +23,10 @@ public class QuizScreenGui extends JFrame implements ActionListener {
     private ArrayList<Question> questions;
     private Question currentQuestion;
     private int currentQuestionNumber;
-    private int numOfQuestions;
+    private int totalPointsAvailable;
     private int score;
     private boolean firstChoiceMade;
+    private int finalNumOfQuestions;
 
     public QuizScreenGui(Category category, int numOfQuestions) {
         super("Quiz");
@@ -39,7 +40,8 @@ public class QuizScreenGui extends JFrame implements ActionListener {
         answerButtons = new JButton[4];
         this.category = category;
         questions = JDBC.getQuestions(category);
-        this.numOfQuestions = Math.min(numOfQuestions, questions.size());
+        this.finalNumOfQuestions= Math.min(numOfQuestions, questions.size());
+        this.totalPointsAvailable = calculateTotalPoints();
 
         for (Question question : questions) {
             ArrayList<Answer> answers = JDBC.getAnswers(question);
@@ -57,7 +59,7 @@ public class QuizScreenGui extends JFrame implements ActionListener {
         topicLabel.setForeground(CommonConstants.BLACK);
         add(topicLabel);
 
-        scoreLabel = new JLabel("Score: " + score + "/" + numOfQuestions);
+        scoreLabel = new JLabel("Score: " + score + "/" + totalPointsAvailable);
         scoreLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         scoreLabel.setBounds(270, 15, 96, 20);
         scoreLabel.setForeground(CommonConstants.BLACK);
@@ -153,10 +155,11 @@ public class QuizScreenGui extends JFrame implements ActionListener {
         if (answerButton.getText().equals(correctAnswer.getAnswerText())) {
             answerButton.setBackground(CommonConstants.LIGHT_GREEN);
             if (!firstChoiceMade) {
-                scoreLabel.setText("Score: " + (++score) + "/" + numOfQuestions);
+                score += currentQuestion.getPoints();
+                scoreLabel.setText("Score: " + score + "/" + totalPointsAvailable);
             }
-            if (currentQuestionNumber == numOfQuestions - 1) {
-                JOptionPane.showMessageDialog(QuizScreenGui.this, "You're final score is " + score + "/" + numOfQuestions);
+            if (currentQuestionNumber == finalNumOfQuestions - 1) {
+                JOptionPane.showMessageDialog(QuizScreenGui.this, "You're final score is " + score + "/" + totalPointsAvailable);
             } else {
                 nexButton.setVisible(true);
             }
@@ -165,4 +168,15 @@ public class QuizScreenGui extends JFrame implements ActionListener {
         }
         firstChoiceMade = true;
     }
+
+    private int calculateTotalPoints() {
+        int total = 0;
+        for (Question question : questions) {
+            total += question.getPoints();
+        }
+        return total;
+    }
+
+
+
 }
