@@ -3,18 +3,19 @@ package database;
 import java.sql.*;
 import java.sql.DriverManager;
 import java.util.ArrayList;
+import static java.sql.DriverManager.getConnection;
 
 public class JDBC {
     // MySQL config
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/quiz_gui_db";
-    private static final String DB_USERNAME = "root";
-    private static final String DB_PASSWORD = "Edusecure@123";
+    public static final String DB_URL = "jdbc:mysql://localhost:3306/quiz_db";
+    public static final String DB_USERNAME = "root";
+    public static final String DB_PASSWORD = "Edusecure@123";
 
 
     public static boolean saveQuestionCategoryAndAnswersToDatabase(String question, String category, String[] answers, int correctIndex) {
      try {
         // establish a database connection
-        Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
         // insert category if it's new, otherwise retrive it from the database
         Category categoryObj = getCategory(category);
@@ -37,7 +38,7 @@ public class JDBC {
     // question methods
     private static Question insertQuestion(Category category , String questionText) {
         try {
-            Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+            Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
     
             PreparedStatement insertQuestionQuery = connection.prepareStatement("INSERT INTO QUESTION (CATEGORY_ID, QUESTION_TEXT) " + "VALUES (? , ?)", Statement.RETURN_GENERATED_KEYS);
             insertQuestionQuery.setInt(1, category.getCategoryId());
@@ -61,7 +62,7 @@ public class JDBC {
     // category methods 
     public static Category getCategory(String category) {
       try {
-        Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
         PreparedStatement getCategoryQuery = connection.prepareStatement("SELECT * FROM CATEGORY WHERE CATEGORY_NAME = ?");
         getCategoryQuery.setString(1, category);
@@ -83,7 +84,7 @@ public class JDBC {
     }
     private static Category insertCategory(String category) {
         try {
-            Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+            Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
     
             PreparedStatement insertCategoryQuery = connection.prepareStatement("INSERT INTO CATEGORY(CATEGORY_NAME) " + "VALUES(?)" , Statement.RETURN_GENERATED_KEYS);
             insertCategoryQuery.setString(1, category);
@@ -107,7 +108,7 @@ public class JDBC {
     public static ArrayList<String> getCategories() {
       ArrayList<String> categoryList = new ArrayList<>();
       try {
-        Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
         Statement getCategoriesQuery = connection.createStatement();
         ResultSet resultSet = getCategoriesQuery.executeQuery("SELECT * FROM CATEGORY");
@@ -132,7 +133,7 @@ public class JDBC {
     public static ArrayList<Question> getQuestions(Category category) {
       ArrayList<Question> questions = new ArrayList<>();
       try {
-        Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
         // query that retrieves all the questions of a category in random order
         PreparedStatement getQuestionsQuery = connection.prepareStatement("SELECT * FROM QUESTION JOIN CATEGORY " + "ON QUESTION.CATEGORY_ID = CATEGORY.CATEGORY_ID " + "WHERE CATEGORY.CATEGORY_NAME = ? ORDER BY RAND()");
@@ -160,7 +161,7 @@ public class JDBC {
     public static ArrayList<Answer> getAnswers(Question question) {
       ArrayList<Answer> answers = new ArrayList<>();
       try {
-        Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+        Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
         // query that retrieves all the questions of a category in random order
         PreparedStatement getAnswersQuery = connection.prepareStatement("SELECT * FROM QUESTION JOIN ANSWER " + "ON QUESTION.QUESTION_ID = ANSWER.QUESTION_ID " + "WHERE QUESTION.QUESTION_ID = ? ORDER BY RAND()");
@@ -188,7 +189,7 @@ public class JDBC {
     // false - failden to insert answers
     private static boolean insertAnswers(Question question, String[] answers, int correctIndex) {
         try {
-            Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+            Connection connection = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
     
             PreparedStatement insertAnswersQuery = connection.prepareStatement("INSERT INTO ANSWER (QUESTION_ID, ANSWER_TEXT, IS_CORRECT) " + "VALUES (? , ?, ?)");
             insertAnswersQuery.setInt(1, question.getQuestionId());
@@ -215,4 +216,20 @@ public class JDBC {
           return false;
 
     }
+
+    public static boolean isAdmin(String username, String password) {
+        String query = "SELECT is_admin FROM users WHERE username = ? AND password = ?";
+        try (Connection conn = getConnection(DB_URL, DB_USERNAME, DB_PASSWORD); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean("is_admin");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

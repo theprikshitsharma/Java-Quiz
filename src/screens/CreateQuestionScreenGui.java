@@ -26,8 +26,8 @@ public class CreateQuestionScreenGui extends JFrame{
         setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        getContentPane().setBackground(CommonConstants.LIGHT_BLUE);
-        
+        getContentPane().setBackground(new Color(30, 30, 30));
+
         answerRadioButtons = new JRadioButton[4];
         answerTextFields = new JTextField[4];
         buttonGroup = new ButtonGroup();
@@ -38,51 +38,50 @@ public class CreateQuestionScreenGui extends JFrame{
 
     public void addGuiComponents() {
 
-        // title label
+        Font modernFont = new Font("Segoe UI", Font.BOLD, 16);
+        Font titleFont = new Font("Segoe UI", Font.BOLD, 24);
+
         JLabel titleLabel = new JLabel("Create your own Question");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        titleLabel.setFont(titleFont);
         titleLabel.setBounds(50,15,310,29);
-        titleLabel.setForeground(CommonConstants.BRIGHT_YELLOW); 
+        titleLabel.setForeground(new Color(0xFFA500));
         add(titleLabel);
 
-        // question label
         JLabel questionLabel = new JLabel("Question: ");
-        questionLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        questionLabel.setFont(modernFont);
         questionLabel.setBounds(50,60,93,20);
-        questionLabel.setForeground(CommonConstants.BRIGHT_YELLOW); 
+        questionLabel.setForeground(new Color(0xFFA500));
         add(questionLabel);
 
-        // question text area
         questionTextArea = new JTextArea();
-        questionTextArea.setFont(new Font("Arial", Font.BOLD, 16));
+        questionTextArea.setFont(modernFont);
         questionTextArea.setBounds(50,90,310,110);
-        questionTextArea.setForeground(CommonConstants.DARK_BLUE);
+        questionTextArea.setForeground(Color.WHITE);
+        questionTextArea.setBackground(new Color(50, 50, 50));
         questionTextArea.setLineWrap(true);
-        questionTextArea.setWrapStyleWord(true); 
+        questionTextArea.setWrapStyleWord(true);
         add(questionTextArea);
 
-        // category label
         JLabel categoryLabel = new JLabel("Category: ");
-        categoryLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        categoryLabel.setFont(modernFont);
         categoryLabel.setBounds(50,250,93,20);
-        categoryLabel.setForeground(CommonConstants.BRIGHT_YELLOW); 
+        categoryLabel.setForeground(new Color(0xFFA500));
         add(categoryLabel);
 
-        // category text input field
         categoryTextField = new JTextField();
-        categoryTextField.setFont(new Font("Arial", Font.BOLD, 16));
+        categoryTextField.setFont(modernFont);
         categoryTextField.setBounds(50,280,310,36);
-        categoryTextField.setForeground(CommonConstants.DARK_BLUE); 
+        categoryTextField.setForeground(Color.WHITE);
+        categoryTextField.setBackground(new Color(50, 50, 50));
         add(categoryTextField);
 
-        addAnswerComponents();
+        addAnswerComponents(modernFont);
 
-        // submit button
         JButton submitButton = new JButton("Submit");
-        submitButton.setFont(new Font("Arial", Font.BOLD, 16));
+        submitButton.setFont(modernFont);
         submitButton.setBounds(300,450, 262,45);
-        submitButton.setBackground(CommonConstants.BRIGHT_YELLOW);
-        submitButton.setForeground(CommonConstants.DARK_BLUE); 
+        submitButton.setBackground(new Color(0xFFA500));
+        submitButton.setForeground(Color.BLACK);
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -94,105 +93,68 @@ public class CreateQuestionScreenGui extends JFrame{
                     for (int i = 0; i < answerTextFields.length; i++) {
                         answers[i] = answerTextFields[i].getText();
                         if (answerRadioButtons[i].isSelected()) {
-                            // correct answer found
                             correctIndex = i;
-                            // break;
                         }
                     }
 
                     if (JDBC.saveQuestionCategoryAndAnswersToDatabase(question, category, answers, correctIndex)) {
-
-                        // update successful
                         JOptionPane.showMessageDialog(CreateQuestionScreenGui.this, "Successfully Added Question!");
-
-                        // reset fields
                         resetFields();
-                    }
-                    else {
-                        // update failed 
+                    } else {
                         JOptionPane.showMessageDialog(CreateQuestionScreenGui.this, "Failed To Add Question...");
                     }
-                }
-                else {
-                    // invalid input
+                } else {
                     JOptionPane.showMessageDialog(CreateQuestionScreenGui.this, "Error: Invalid Input");
                 }
             }
         });
-        
-
         add(submitButton);
 
-        // go back label
-
         JLabel goBackLabel = new JLabel("Go Back");
-        goBackLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        goBackLabel.setFont(modernFont);
         goBackLabel.setBounds(300,500, 262,20);
-        goBackLabel.setForeground(CommonConstants.BRIGHT_YELLOW); 
+        goBackLabel.setForeground(new Color(0xFFA500));
         goBackLabel.setHorizontalAlignment(SwingConstants.CENTER);
         goBackLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // display title screen
                 TitleScreenGui titleScreenGui = new TitleScreenGui();
                 titleScreenGui.setLocationRelativeTo(CreateQuestionScreenGui.this);
-
-                // dispose of this screen
                 CreateQuestionScreenGui.this.dispose();
-
-                //make title screen visible
                 titleScreenGui.setVisible(true);
             }
         });
-        // goBackLabel.setBackground(CommonConstants.BLACK); 
-        // goBackLabel.setOpaque(true); // no need at the moment
         add(goBackLabel);
     }
 
-    private void addAnswerComponents() {
-        // vertical spacing between each answer component
+    private void addAnswerComponents(Font modernFont) {
         int verticalSpacing = 100;
-
-        // adding 4 answer labels, 4 radio buttons and 4 text input fields
-
         for (int i = 0; i < 4; i++) {
-            
-            // answer label
             JLabel answerLabel = new JLabel("Answer #" + (i+1));
-            answerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+            answerLabel.setFont(modernFont);
             answerLabel.setBounds(470,60 + (i * verticalSpacing),93,20);
-            answerLabel.setForeground(CommonConstants.BRIGHT_YELLOW); 
+            answerLabel.setForeground(new Color(0xFFA500));
             add(answerLabel);
 
-            // radio button
             answerRadioButtons[i] = new JRadioButton();
             answerRadioButtons[i].setBounds(440, 100 + (i * verticalSpacing), 21, 21);
-            answerRadioButtons[i].setBackground(null);
+            answerRadioButtons[i].setBackground(new Color(30, 30, 30));
             buttonGroup.add(answerRadioButtons[i]);
             add(answerRadioButtons[i]);
 
-            // answer field
             answerTextFields[i] = new JTextField();
             answerTextFields[i].setBounds(470, 90 + (i * verticalSpacing), 310, 36);
-            answerTextFields[i].setFont(new Font("Arial", Font.PLAIN, 16));
-            answerTextFields[i].setForeground(CommonConstants.DARK_BLUE); 
+            answerTextFields[i].setFont(modernFont);
+            answerTextFields[i].setForeground(Color.WHITE);
+            answerTextFields[i].setBackground(new Color(50, 50, 50));
             add(answerTextFields[i]);
-        } 
-
-        // set the first radio button as the default answer
+        }
         answerRadioButtons[0].setSelected(true);
     }
-    // true - valid input
-    // false - invalid input
 
     private boolean validateInput() {
-        // make sure that question field is not empty
         if (questionTextArea.getText().replaceAll(" ", "").length() <= 0) return false;
-
-        // make sure that the category field is not empty
         if (categoryTextField.getText().replaceAll(" ", "").length() <= 0) return false;
-
-        // make sure all answer fields are not empty
         for (int i = 0; i < answerTextFields.length; i++) {
             if (answerTextFields[i].getText().replaceAll(" ", "").length() <= 0)
                 return false;
